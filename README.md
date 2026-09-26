@@ -1,6 +1,6 @@
 # MemAdapter
 
-Official code for evaluating memory systems with retrieval, memory-guided generation, and rubric-based judging. The repository is intentionally code-only: it contains source code, launchers, prompt templates, and non-sensitive configuration examples, but no benchmark data, retrieved memories, model outputs, judge outputs, tables, logs, checkpoints, endpoint URLs, or credentials.
+Official code for evaluating memory systems with retrieval, memory-guided generation, and rubric-based judging. The repository provides source code, launchers, prompt templates, and configuration examples for reproducing the evaluation pipeline.
 
 ## Overview
 
@@ -49,9 +49,9 @@ Create an environment and install the dependencies:
 python -m pip install -r requirements.txt
 ```
 
-Copy `config/models.example.env` to a local, ignored environment file or export its values through your shell/secret manager. API endpoints and credentials are deliberately not stored in this repository. For Qwen3-8B, set `QWEN_LOCAL_MODEL_PATH` to an authorized local model directory.
+Copy `config/models.example.env` to a local environment file or export its values through your shell/secret manager. For Qwen3-8B, set `QWEN_LOCAL_MODEL_PATH` to an authorized local model directory.
 
-Obtain each benchmark from its official distribution and keep its data outside this repository. Point the runners to locally obtained benchmark locations through their documented environment variables and command-line arguments.
+Obtain each benchmark from its official distribution and point the runners to the benchmark locations through their documented environment variables and command-line arguments.
 
 ## Running the pipeline
 
@@ -68,11 +68,9 @@ For a MemAdapter run, inspect the available arguments with:
 python methods/memadapter/run_memadapter.py --help
 ```
 
-Generated artifacts are resumable and record retrieved memories, boundary cards, memory-use instructions, final responses, structured judge outputs, and runtime metadata per evaluated instance. Those artifacts are ignored by Git and are not released here.
+Generated artifacts are resumable and record retrieved memories, boundary cards, memory-use instructions, final responses, structured judge outputs, and runtime metadata per evaluated instance.
 
-## Retained ablations
-
-The public release retains only the two paper ablations below; other exploratory variants are excluded.
+## Paper ablations
 
 | Variant | Retained computation | Final generator |
 | --- | --- | --- |
@@ -83,11 +81,7 @@ Use `methods/memadapter/ablations/run_ablation.ps1` for one experiment cell, or 
 
 ## Evaluation protocol
 
-The implementation follows the official protocol and task-specific rubrics for each supported benchmark. Prompt templates in `external_benchmarks/rubrics/` are protocol assets, not experimental results. Some official templates contain synthetic illustrative user scenarios; they are retained only because the judge requires the exact task rubric, and they do not identify project members, contributors, or evaluated users.
-
-## Privacy and release policy
-
-Before release, scan tracked files for credentials, endpoints, personal identifiers, organization names, machine paths, raw datasets, retrievals, generations, judgments, logs, and checkpoints. Do not commit `.env` files or any generated artifact. The repository's `.gitignore` blocks these common sources of accidental disclosure by default.
+The implementation follows the official protocol and task-specific rubrics for each supported benchmark. Prompt templates in `external_benchmarks/rubrics/` provide the task-specific judge instructions, including synthetic illustrative scenarios used by the official evaluation protocol.
 
 ## Citation
 
