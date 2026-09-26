@@ -1,6 +1,6 @@
 """Run the MemAdapter experiment on frozen MemSyco-Bench retrieval records.
 
-Examples (PowerShell, from ``D:/agent记忆谄媚``)::
+Examples (PowerShell, from the repository root)::
 
     $env:DEEPSEEK_API_KEY = "..."
     python MemAdapter/run_memadapter.py run-all --model DeepSeek-V4-Flash --memory-system AMEM --limit 10
