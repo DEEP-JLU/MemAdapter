@@ -124,10 +124,10 @@ def check_persist_prompts(report: Results) -> None:
 
     # The generator's own framing must be the same function, or the judge sees a
     # differently-rendered memory block than the generator did.
-    theirs_gen = upstream.build_generation_prompt(memories, "deepseek-flash")
+    theirs_gen = upstream.build_generation_prompt(memories, "DeepSeek-V4-Flash")
     from . import dataset_adapters
 
-    ours_gen = upstream.GENERATOR_SYSTEM_PROMPT.replace("{model_name}", "deepseek-flash").replace(
+    ours_gen = upstream.GENERATOR_SYSTEM_PROMPT.replace("{model_name}", "DeepSeek-V4-Flash").replace(
         "{memories}", dataset_adapters.formatted_memories(memories)
     )
     report.append(

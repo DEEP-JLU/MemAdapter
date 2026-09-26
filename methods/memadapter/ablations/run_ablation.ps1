@@ -4,7 +4,7 @@ param(
     [string]$Variant,
 
     [Parameter(Mandatory = $true)]
-    [ValidateSet("DeepSeek", "GPT", "Qwen")]
+    [ValidateSet("DeepSeek-V4-Flash", "GPT-5.6-sol", "Qwen3-8B")]
     [string]$Model,
 
     [Parameter(Mandatory = $true)]

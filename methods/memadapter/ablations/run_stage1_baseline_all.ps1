@@ -1,6 +1,6 @@
 param(
-    [ValidateSet("DeepSeek", "GPT", "Qwen")]
-    [string]$Model = "DeepSeek",
+    [ValidateSet("DeepSeek-V4-Flash", "GPT-5.6-sol", "Qwen3-8B")]
+    [string]$Model = "DeepSeek-V4-Flash",
 
     [int]$Workers = 4,
     [Nullable[int]]$Limit,
@@ -18,7 +18,7 @@ $systems = @("AMEM", "Mem0", "naiveRAG", "MemoryBank", "LightMem")
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $runner = Join-Path $scriptRoot "run_ablation.ps1"
 
-if ([string]::IsNullOrWhiteSpace($env:DEEPSEEK_API_KEY) -and $Model -eq "DeepSeek") {
+if ([string]::IsNullOrWhiteSpace($env:DEEPSEEK_API_KEY) -and $Model -eq "DeepSeek-V4-Flash") {
     throw "DEEPSEEK_API_KEY is not set in this PowerShell session. Set it before launching the experiment."
 }
 

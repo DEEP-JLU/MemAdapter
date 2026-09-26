@@ -4,7 +4,7 @@ Both arms of the experiment have to run under one environment, and only one of t
 was getting it. ``build_retrieval`` and ``run_external_baseline`` call
 ``load_env_file()`` themselves; ``MemAdapter/run_memadapter.py`` does not, and must
 not be modified. Invoked directly it therefore inherits whatever the shell happens
-to hold, and the failure is not a clean "missing key" -- ``ModelClient("DeepSeek")``
+to hold, and the failure is not a clean "missing key" -- ``ModelClient("DeepSeek-V4-Flash")``
 falls back from ``DEEPSEEK_API_KEY`` to ``OPENAI_API_KEY``, so an unrelated gateway
 credential in the environment produces a 401 INVALID_API_KEY that reads like a
 broken endpoint.

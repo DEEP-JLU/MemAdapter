@@ -73,7 +73,7 @@ MODEL_ENV_KEYS = (
     "DEEPSEEK_BASE_URL",
 )
 
-DEFAULT_TEMPERATURE = "0.7"
+DEFAULT_TEMPERATURE = "0.2"
 DEFAULT_MAX_TOKENS = "4096"
 
 #: The one field that is *supposed* to differ between arms -- it is the intervention.
@@ -137,7 +137,7 @@ def sha256_file(path: str | Path) -> str:
 
 def resolved_generation_model() -> str:
     """The generation model id as the client will actually send it."""
-    return os.environ.get("DEEPSEEK_MODEL", "").strip() or "deepseek-v4-flash"
+    return os.environ.get("DEEPSEEK_MODEL", "").strip() or "DeepSeek-V4-Flash"
 
 
 def generation_base_url() -> str:
@@ -159,7 +159,7 @@ def resolved_max_tokens() -> int:
 
 
 def resolved_thinking() -> bool:
-    """Whether DeepSeek reasoning mode is on.
+    """Whether DeepSeek-V4-Flash reasoning mode is on.
 
     ``model_client`` disables thinking unless ``MEMADAPTER_ENABLE_REASONING`` is
     set, so an unset variable is a meaningful value ('off') rather than a gap.
@@ -210,7 +210,7 @@ def env_file_conflicts(path: Path | None = None) -> list[str]:
     :func:`load_env_file` lets the surrounding shell win, which is the right
     precedence -- but it wins silently, so a stale export can change the protocol
     with no signal at all. The model client makes that worse by falling back:
-    ``ModelClient("DeepSeek")`` reads ``DEEPSEEK_API_KEY`` and then
+    ``ModelClient("DeepSeek-V4-Flash")`` reads ``DEEPSEEK_API_KEY`` and then
     ``OPENAI_API_KEY``, so an unrelated gateway credential already in the shell is
     enough to produce a 401 that looks like a bad endpoint rather than a shadowed
     variable.

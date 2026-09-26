@@ -1,1 +1,1 @@
-{"system":"MemoryBank","datasets":["MemSyco-Bench","PersistBench","MemTrapBench"],"models":["DeepSeek","Qwen","GPT"],"ablations":["stage1_only","stage1_stage2"],"runner":"methods/memadapter/run_memadapter.py"}
+{"system":"MemoryBank","datasets":["MemSyco-Bench","PersistBench","MemTrapBench"],"models":["DeepSeek-V4-Flash","GPT-5.6-sol","Qwen3-8B"],"ablations":["stage1_only","stage1_stage2"],"runner":"methods/memadapter/run_memadapter.py"}

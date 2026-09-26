@@ -56,7 +56,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
             "safety classes are generated 1..3 times, everything else once (0)."
         ),
     )
-    parser.add_argument("--model", default="DeepSeek", choices=("DeepSeek", "GPT", "Qwen"))
+    parser.add_argument("--model", default="DeepSeek-V4-Flash", choices=("DeepSeek-V4-Flash", "GPT-5.6-sol", "Qwen3-8B"))
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument(
         "--workers",

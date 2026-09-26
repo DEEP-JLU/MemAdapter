@@ -244,7 +244,7 @@ def markdown(metrics: list[dict[str, Any]]) -> str:
     lines = [
         "# External benchmark summary",
         "",
-        "Judge substitution: both benchmarks use `deepseek-flash` with temperature 0.0 and thinking disabled. Absolute scores are not directly comparable with the papers; baseline versus MemAdapter is the valid contrast.",
+        "Judge substitution: both benchmarks use `DeepSeek-V4-Flash` with temperature 0.0 and thinking disabled. Absolute scores are not directly comparable with the papers; baseline versus MemAdapter is the valid contrast.",
         "",
         "PersistBench here measures retrieval and use after ingesting its given memories into the selected memory system. `top_k` is the given-memory count for each sample.",
         "",

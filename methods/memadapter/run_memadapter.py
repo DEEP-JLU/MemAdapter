@@ -3,8 +3,8 @@
 Examples (PowerShell, from ``D:/agent记忆谄媚``)::
 
     $env:DEEPSEEK_API_KEY = "..."
-    python MemAdapter/run_memadapter.py run-all --model DeepSeek --memory-system AMEM --limit 10
-    python MemAdapter/run_memadapter.py run-all --model GPT --memory-system Mem0
+    python MemAdapter/run_memadapter.py run-all --model DeepSeek-V4-Flash --memory-system AMEM --limit 10
+    python MemAdapter/run_memadapter.py run-all --model GPT-5.6-sol --memory-system Mem0
 
 Generation is resumable. A completed row is appended only after all three
 MemAdapter stages succeed. With ``--continue-on-error``, successful rows are
@@ -42,7 +42,10 @@ if str(BENCHMARK_ROOT / "evaluation") not in sys.path:
 if str(BENCHMARK_ROOT) not in sys.path:
     sys.path.insert(0, str(BENCHMARK_ROOT))
 
-from _dataset_compat import to_eval_row  # noqa: E402
+try:
+    from ._dataset_compat import to_eval_row  # type: ignore[no-redef]
+except ImportError:
+    from _dataset_compat import to_eval_row  # noqa: E402
 
 from memadapter import ABLATION_VARIANTS, run_ablation, run_three_stage  # noqa: E402
 from model_client import MODEL_DEFAULTS, ModelClient, _openai_base_url  # noqa: E402
@@ -83,7 +86,7 @@ ABLATION_PROMPT_FILES = {
         "ablations/prompts/stage1_stage2_then_baseline_generation.txt",
     ),
 }
-MODELS = ("DeepSeek", "GPT", "Qwen")
+MODELS = ("DeepSeek-V4-Flash", "GPT-5.6-sol", "Qwen3-8B")
 TASKS = (
     "objective_fact_judgment",
     "contextual_scope_control",
@@ -835,7 +838,7 @@ def generate(args: argparse.Namespace) -> None:
     def get_stage3_client() -> ModelClient:
         client = getattr(thread_state, "stage3_client", None)
         if client is None:
-            client = ModelClient(os.environ.get("MEMADAPTER_STAGE3_MODEL", "DeepSeek"))
+            client = ModelClient(os.environ.get("MEMADAPTER_STAGE3_MODEL", "DeepSeek-V4-Flash"))
             thread_state.stage3_client = client
         return client
 
@@ -1131,7 +1134,7 @@ def generate(args: argparse.Namespace) -> None:
 
 
 def judge_settings(model_name: str) -> dict[str, str]:
-    prefix = {"DeepSeek": "DEEPSEEK", "GPT": "EVAL", "Qwen": "QWEN"}[model_name]
+    prefix = {"DeepSeek-V4-Flash": "DEEPSEEK", "GPT-5.6-sol": "EVAL", "Qwen3-8B": "QWEN"}[model_name]
     defaults = MODEL_DEFAULTS[model_name]
     key = os.environ.get("JUDGE_API_KEY", "").strip() or os.environ.get(f"{prefix}_JUDGE_API_KEY", "").strip()
     key = key or os.environ.get(f"{prefix}_API_KEY", "").strip()

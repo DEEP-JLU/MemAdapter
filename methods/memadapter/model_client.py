@@ -16,26 +16,26 @@ except ImportError:
     from efficiency import ModelCallResult, extract_usage, utc_now
 
 MODEL_DEFAULTS = {
-    "DeepSeek": {
+    "DeepSeek-V4-Flash": {
         "api_key": "DEEPSEEK_API_KEY",
         "base_url": "DEEPSEEK_BASE_URL",
         "model": "DEEPSEEK_MODEL",
         "default_base_url": "",
-        "default_model": "deepseek-v4-flash",
+        "default_model": "DeepSeek-V4-Flash",
     },
-    "GPT": {
+    "GPT-5.6-sol": {
         "api_key": "EVAL_API_KEY",
         "base_url": "EVAL_BASE_URL",
         "model": "EVAL_MODEL",
         "default_base_url": "",
-        "default_model": "gpt-5.6-sol",
+        "default_model": "GPT-5.6-sol",
     },
-    "Qwen": {
+    "Qwen3-8B": {
         "api_key": "QWEN_API_KEY",
         "base_url": "QWEN_BASE_URL",
         "model": "QWEN_MODEL",
         "default_base_url": "",
-        "default_model": "qwen-plus",
+        "default_model": "Qwen3-8B",
     },
 }
 
@@ -188,8 +188,12 @@ class ModelClient:
         self.model_name = model_name
         self.runtime_config: dict[str, Any] = {"backend": "openai-compatible"}
         local_qwen_path = (
-            _value("QWEN_LOCAL_MODEL_PATH") if model_name == "Qwen" else ""
+            _value("QWEN_LOCAL_MODEL_PATH") if model_name == "Qwen3-8B" else ""
         )
+        if model_name == "Qwen3-8B" and not local_qwen_path:
+            raise RuntimeError(
+                "Qwen3-8B is configured for local inference. Set QWEN_LOCAL_MODEL_PATH."
+            )
         if local_qwen_path:
             self.api_key = ""
             self.base_url = "local://transformers"
@@ -197,7 +201,7 @@ class ModelClient:
                 "QWEN_LOCAL_MODEL_NAME",
                 default=Path(local_qwen_path).name,
             )
-            self.temperature = float(_value("MEMADAPTER_TEMPERATURE", default="0"))
+            self.temperature = float(_value("MEMADAPTER_TEMPERATURE", default="0.2"))
             self.max_tokens = int(_value("MEMADAPTER_MAX_TOKENS", default="4096"))
             runtime = _local_qwen_runtime(local_qwen_path)
             self._local_qwen = runtime
@@ -233,8 +237,8 @@ class ModelClient:
         )
         self.model = _value(defaults["model"], "OPENAI_MODEL", default=defaults["default_model"])
         self.api_mode = _api_mode("MEMADAPTER_API_MODE", "OPENAI_API_MODE")
-        self.temperature = float(_value("MEMADAPTER_TEMPERATURE", default="0"))
-        self.max_tokens = int(_value("MEMADAPTER_MAX_TOKENS", default="8192"))
+        self.temperature = float(_value("MEMADAPTER_TEMPERATURE", default="0.2"))
+        self.max_tokens = int(_value("MEMADAPTER_MAX_TOKENS", default="4096"))
         self.client = OpenAI(
             api_key=self.api_key,
             base_url=self.base_url,
@@ -372,7 +376,7 @@ class ModelClient:
         json_mode: bool = False,
         max_tokens: int | None = None,
     ) -> ModelCallResult:
-        if self.model_name == "Qwen" and hasattr(self, "_local_qwen"):
+        if self.model_name == "Qwen3-8B" and hasattr(self, "_local_qwen"):
             return self._complete_local_qwen(
                 system_prompt,
                 user_prompt,
@@ -404,21 +408,21 @@ class ModelClient:
         # transport-level constraint only for Qwen and parse its normal reply.
         if (
             json_mode
-            and self.model_name != "Qwen"
+            and self.model_name != "Qwen3-8B"
             and not _value("MEMADAPTER_DISABLE_JSON_MODE")
         ):
             request["response_format"] = {"type": "json_object"}
-        if self.model_name == "GPT" and not _value("MEMADAPTER_ENABLE_REASONING"):
+        if self.model_name == "GPT-5.6-sol" and not _value("MEMADAPTER_ENABLE_REASONING"):
             request["reasoning_effort"] = "none"
-        elif self.model_name == "DeepSeek" and not _value("MEMADAPTER_ENABLE_REASONING"):
+        elif self.model_name == "DeepSeek-V4-Flash" and not _value("MEMADAPTER_ENABLE_REASONING"):
             request["extra_body"] = {"thinking": {"type": "disabled"}}
             request["reasoning_effort"] = "none"
-        elif self.model_name == "Qwen":
+        elif self.model_name == "Qwen3-8B":
             # DashScope's OpenAI-compatible endpoint controls Qwen3 reasoning
             # through this provider-specific field.  Keep it explicit in the
             # recorded runtime configuration rather than relying on a model
             # default that can vary by deployment.
-            enabled = _value("QWEN_ENABLE_THINKING", default="true").lower()
+            enabled = _value("QWEN_ENABLE_THINKING", default="false").lower()
             qwen_extra: dict[str, Any] = {"enable_thinking": enabled in {"1", "true", "yes"}}
             top_k = _value("MEMADAPTER_TOP_K")
             if top_k:

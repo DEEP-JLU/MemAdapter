@@ -113,7 +113,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--arm", choices=("baseline", "anti_sycophancy"), default="baseline",
         help="Generation arm. anti_sycophancy appends its frozen memory-evidence instruction.",
     )
-    parser.add_argument("--model", default="DeepSeek", choices=("DeepSeek", "GPT", "Qwen"))
+    parser.add_argument("--model", default="DeepSeek-V4-Flash", choices=("DeepSeek-V4-Flash", "GPT-5.6-sol", "Qwen3-8B"))
     parser.add_argument(
         "--output-dir",
         type=Path,

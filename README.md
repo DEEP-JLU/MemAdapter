@@ -9,14 +9,14 @@ Code for the paper's evaluation pipeline. This repository deliberately contains 
 | Judge | `external_benchmarks/judges/` and `external_benchmarks/run_external_judge.py` | Apply dataset-specific judge prompts. |
 | Experiment matrix | `generation/systems/` | Records each memory system's datasets, model families, and retained ablations. |
 
-The supported model-family labels are `DeepSeek`, `Qwen`, and `GPT`. Endpoints, model identifiers, and credentials must be supplied locally through environment variables; see `config/models.example.env`.
+The generation backbones are `DeepSeek-V4-Flash`, `GPT-5.6-sol`, and `Qwen3-8B`. DeepSeek-V4-Flash and GPT-5.6-sol use temperature 0.2 and a 4,096-token output limit; Qwen3-8B runs locally with 4-bit NF4, bfloat16, greedy decoding, and thinking disabled. Endpoints, model identifiers, and credentials must be supplied locally through environment variables; see `config/models.example.env`.
 
 ## Quick start
 
 1. Create a Python environment and install `requirements.txt`.
 2. Obtain benchmark datasets separately and place them outside this repository (or configure their locations locally).
 3. Export the model family's key, endpoint, and model name in your shell. Do not write these values into tracked files.
-4. Run retrieval, generation, then judging. Each stage writes to an ignored output directory, so experiment artifacts cannot be committed accidentally.
+4. Run retrieval, generation, then judging. The judge uses deterministic decoding and structured outputs for metric computation. Each stage writes to an ignored output directory, so experiment artifacts cannot be committed accidentally.
 
 ## Retained ablations
 

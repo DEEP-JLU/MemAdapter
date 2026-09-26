@@ -18,7 +18,7 @@ Three protocol details are load-bearing:
     own analysis reads ``score`` only (``failure_rates.extract_score``), so the
     original key is preserved *and* the value mirrored into ``score``.
 *   **a ``<think>`` trace is stripped before parsing.** The judge here is
-    ``deepseek-flash`` rather than the paper's Kimi-K2-Thinking, so the trace has to be
+    ``DeepSeek-V4-Flash`` rather than the paper's Kimi-K2-Thinking, so the trace has to be
     handled the way upstream handles it: kept as its own field, excluded from the JSON.
 """
 

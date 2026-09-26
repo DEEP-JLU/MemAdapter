@@ -1,4 +1,6 @@
 openai>=1.0
+accelerate>=0.28
+bitsandbytes>=0.43
 psutil>=5.9
 python-dotenv>=1.0
 requests>=2.31

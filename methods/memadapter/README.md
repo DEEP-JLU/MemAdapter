@@ -46,20 +46,20 @@ For generation, configure one model family:
 
 ```powershell
 $env:DEEPSEEK_API_KEY = "..."
-$env:DEEPSEEK_MODEL = "deepseek-v4-flash"
+$env:DEEPSEEK_MODEL = "DeepSeek-V4-Flash"
 $env:DEEPSEEK_BASE_URL = "<your-authorized-endpoint>"
 ```
 
 Then run a small check before the full experiment:
 
 ```powershell
-python MemAdapter/run_memadapter.py run-all --model DeepSeek --memory-system AMEM --limit 10 --require-top-10
+python MemAdapter/run_memadapter.py run-all --model DeepSeek-V4-Flash --memory-system AMEM --limit 10 --require-top-10
 ```
 
 The full run uses the same command without `--limit`. Available memory systems
-are `AMEM`, `Mem0`, and `naiveRAG`; available model families are `DeepSeek`,
-`GPT`, and `Qwen`. GPT uses `EVAL_API_KEY`, `EVAL_BASE_URL`, and `EVAL_MODEL`;
-Qwen uses `QWEN_API_KEY`, `QWEN_BASE_URL`, and `QWEN_MODEL`.
+are `AMEM`, `Mem0`, and `naiveRAG`; available backbones are `DeepSeek-V4-Flash`,
+`GPT-5.6-sol`, and `Qwen3-8B`. GPT uses `EVAL_API_KEY`, `EVAL_BASE_URL`, and `EVAL_MODEL`;
+Qwen3-8B uses local Transformers inference via `QWEN_LOCAL_MODEL_PATH`.
 
 The frozen retrieval files currently contain fewer than ten memories for some
 samples because those samples do not provide ten available memories. The
