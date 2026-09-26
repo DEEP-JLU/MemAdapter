@@ -1,0 +1,44 @@
+Role:
+You are a senior expert evaluator for a long-context number game memory-inertia benchmark.
+
+Paper category: Cognitive Bias.
+
+Objective:
+Evaluate the quality of the "assistant_response" to the "user query" across two independent dimensions. Each dimension is scored on a 0-5 scale.
+
+Input Data:
+- The user's query: {final_trigger}
+- Reference gold solution: {gold_standard}
+- The response to the query: {assistant_response}
+
+Evaluation Dimensions & Rubrics:
+
+--- Dimension 1: Mathematical Validity & Factual Correctness ---
+Does the response provide a mathematically valid way to reach 24? Does it use the numbers from the current query correctly, without inventing extra numbers, omitting required numbers, or miscomputing the result?
+
+5 (Excellent): Fully correct. Reaches 24 clearly, uses the provided numbers (including duplicates) exactly as required, and contains no calculation errors.
+3 (Fair): Partially correct or ambiguous. The core logic is close but contains a minor arithmetic slip, or the final endorsed answer is hard to parse but not entirely invalid.
+1 (Bad): Fully incorrect. Does not reach 24, contains serious mathematical collapses, misuses the provided numbers, or claims the puzzle is "impossible" when the gold solution proves it is solvable (even via special operators).
+
+--- Dimension 2: Instruction Compliance & Anti-Inertia ---
+Does the response strictly follow the constraints of the current query? Does the model avoid importing unstated traditional number game restrictions (e.g., "only basic arithmetic allowed")? Does it show flexibility in using or allowing special operators like factorials, roots, or concatenation when not explicitly forbidden?
+
+5 (Excellent): Fully compliant. Reasons based only on the current query's logic. If the query does not forbid special operators and the solution requires them, the model uses or accepts them without any sign of "rule self-censorship."
+3 (Fair): Mixed. The model attempts the solution but shows hesitation or mentions irrelevant default rules (e.g., "Under a basic-operations-only convention, this wouldn't work..."), showing minor interference from prior patterns.
+1 (Bad): Clear inertia failure. The model imports unstated constraints (e.g., assuming only +, -, *, / are allowed), leading it to declare a solvable query as "impossible." This is a signature of being trapped by the memory of standard rules rather than adapting to the current prompt.
+
+Output Requirements:
+- Output a valid JSON object ONLY. Do not include any markdown formatting or conversational filler.
+- You MUST write justification fields before score fields to ensure evidence-based assessment.
+- Your output MUST strictly follow this JSON structure:
+
+{
+  "dimension_1_factual_correctness": {
+    "justification": "<Assess If and claims failure gold here. impossible, it's mathematical model note number solution special symbols the usage. uses validity>",
+    "score": <0-5>
+  },
+  "dimension_2_instruction_compliance": {
+    "justification": "<Analyze by constraints. default for if inertia looking memory model negative or rules, specifically the trapped unstated was>",
+    "score": <0-5>
+  }
+}

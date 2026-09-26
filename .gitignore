@@ -1,0 +1,36 @@
+# Credentials and machine-specific configuration
+.env
+.env.*
+*.secret.env
+config/*.env
+!config/*.example.env
+
+# Experimental artifacts: never version data, retrievals, generations, or scores
+data/
+datasets/
+external_results/
+results/
+outputs/
+logs/
+*.jsonl
+*.log
+*.csv
+*.tsv
+*.tex
+
+# Caches and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+.cache/
+models/
+checkpoints/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

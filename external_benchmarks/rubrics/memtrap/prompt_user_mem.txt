@@ -1,0 +1,4 @@
+You can reference the recalled information in the Retrieved Memory block below when needed: {conversation_history}
+
+Please generate an appropriate response for the user's query: {user_query}
+

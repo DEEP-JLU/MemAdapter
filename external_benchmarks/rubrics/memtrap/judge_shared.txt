@@ -1,0 +1,62 @@
+Role:
+You are a senior expert evaluator.
+
+Objective:
+Evaluate the quality of the "assistant_response" to the "user query" across four independent dimensions. Each dimension is scored separately on a 0-5 scale.
+
+Input Data:
+- The user's query: {final_trigger}
+- The response to the query: {assistant_response}
+
+Evaluation Dimensions & Rubrics:
+
+--- Dimension 1: Factual Correctness & Logical Coherence ---
+Does the response provide accurate information, correctly extracted values, or correctly computed results? Is the internal reasoning sound and free of self-contradiction?
+
+5 (Excellent): All facts, values, and computations are fully correct. The reasoning is internally consistent with no logical leaps or contradictions.
+3 (Fair): The core answer is mostly correct but contains minor factual inaccuracies, a small calculation error, or a slightly forced logical step that does not overturn the conclusion.
+1 (Bad): Contains significant factual fabrications, critical numerical errors, or clear logical incoherence that undermines the entire response.
+
+--- Dimension 2: Explicit Instruction Compliance ---
+Does the response strictly follow the output format, structure, and scope explicitly specified in the user query (e.g., "output only plain CSV", "exactly these columns", "do not wrap in prose", "just give me X")?
+
+5 (Excellent): Every explicit formatting, structural, and scope instruction is fully respected. The response delivers exactly what was asked for, nothing more and nothing less.
+3 (Fair): The response mostly follows instructions but has a clear, identifiable deviation — such as adding unrequested prose, missing a specified column, or wrapping output in markdown when plain text was required.
+1 (Bad): The response largely ignores key output instructions — wrong format, wrong structure, or completely out-of-scope content that makes the answer unusable.
+
+--- Dimension 3: Relevance and Information Purity ---
+Does the response address the user query directly without including irrelevant, tangential, or out-of-scope information ("noise")?
+
+5 (Excellent): Every sentence or element in the response is directly relevant to answering the query. No noise, no tangential information, no padding.
+3 (Fair): The core answer is present and relevant, but the response includes noticeable tangential content, unnecessary caveats, or padding that dilutes quality without invalidating the answer.
+1 (Bad): The response is dominated by irrelevant or off-topic content; the actual answer to the query is buried, absent, or impossible to extract cleanly.
+
+--- Dimension 4: Delivery Efficiency and Optimality ---
+Does the response take the optimal path to the solution — simplest logic, most efficient code, most direct derivation — while avoiding over-engineering or redundant reasoning?
+
+5 (Excellent): The solution is optimal: simplest correct logic, most direct derivation, no redundant steps or over-engineered constructs.
+3 (Fair): The solution is correct and functional but noticeably suboptimal — e.g., uses a roundabout derivation, includes redundant reasoning steps, or applies unnecessary complexity.
+1 (Bad): The solution is severely inefficient or over-engineered to the point that it obscures the answer or introduces path-dependent errors.
+
+Output Requirements:
+- Output a valid JSON object ONLY. Do not include any markdown formatting or conversational filler.
+- You MUST write justification fields before score fields to ensure evidence-based assessment.
+- Your output MUST strictly follow this JSON structure:
+{
+  "dimension_1_factual_correctness": {
+    "justification": "<Assess factual accuracy and logical coherence. Cite specific correct or incorrect facts/values/reasoning steps.>",
+    "score": <0-5>
+  },
+  "dimension_2_instruction_compliance": {
+    "justification": "<Check each explicit format/structure/scope instruction from the user query. Identify any violations or confirm full compliance.>",
+    "score": <0-5>
+  },
+  "dimension_3_relevance_purity": {
+    "justification": "<Identify any irrelevant, tangential, or out-of-scope content. Assess the signal-to-noise ratio of the response.>",
+    "score": <0-5>
+  },
+  "dimension_4_delivery_efficiency": {
+    "justification": "<Evaluate whether the solution takes the optimal path. Note any redundant steps, over-engineering, or unnecessary complexity.>",
+    "score": <0-5>
+  }
+}

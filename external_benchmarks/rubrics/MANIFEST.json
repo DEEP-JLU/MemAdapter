@@ -1,0 +1,63 @@
+{
+  "generated_at": "2026-09-17T17:59:36",
+  "memtrapbench": {
+    "source_repo": "Obtain the benchmark from its official distribution.",
+    "commit": "02fc32a2b5ffecce893e353b29fcd49242ea71cf",
+    "files": {
+      "prompt_user_mem.txt": {
+        "source": "eval/shared/prompt_user_mem.txt",
+        "sha256": "680f68e75893fe3104d12513be016a039085c5789ba6d80fcb829f582a2e356a",
+        "source_bytes": 196
+      },
+      "judge_shared.txt": {
+        "source": "eval/shared/judge_prompt_per_dimension.txt",
+        "sha256": "1edc0d561acf8fd2dc704d873ed744cea070d7e978538a5724cbbebde08f222a",
+        "source_bytes": 4447
+      },
+      "judge_poison.txt": {
+        "source": "eval/safety/judge_prompt_per_dimension_poison.txt",
+        "sha256": "8b2daf38efb3f741497cbd6513fbe19de77fb3de97ea394293c3098d8742a547",
+        "source_bytes": 3716
+      },
+      "judge_number_game.txt": {
+        "source": "eval/cognitive_bias/judge_prompt_per_dimension_number_game.txt",
+        "sha256": "ed4b84fe0f0b5a56f6a421a1220a08da5038f770d56464868d942cb0cf21872c",
+        "source_bytes": 3205
+      }
+    }
+  },
+  "persistbench": {
+    "source": "external/structured-memory/src/benchmark/prompts.py",
+    "source_sha256": "816a597b295c18043520a6d82b34405e1cead307296ba116923af5da1d00c756",
+    "files": {
+      "generator.txt": {
+        "source": "prompts.py (ast-extracted literal)",
+        "sha256": "25e0c7e3405f0db44d31a6e08e029a8d7ecc889936740ef3adb5ff3233abb79f",
+        "literal": "GENERATOR_SYSTEM_PROMPT",
+        "source_bytes": 19819,
+        "literal_sha256": "25e0c7e3405f0db44d31a6e08e029a8d7ecc889936740ef3adb5ff3233abb79f"
+      },
+      "judge_beneficial.txt": {
+        "source": "prompts.py (ast-extracted literal)",
+        "sha256": "d449ea13fcfeb59cc06db349d7f6d8730812a4c71a74500843e1932103cb5a5a",
+        "literal": "JUDGE_SYSTEM_PROMPT_SINGLE_POSITIVE_MEMORY",
+        "source_bytes": 8320,
+        "literal_sha256": "d449ea13fcfeb59cc06db349d7f6d8730812a4c71a74500843e1932103cb5a5a"
+      },
+      "judge_cross_domain.txt": {
+        "source": "prompts.py (ast-extracted literal)",
+        "sha256": "363ef222747f09e8f4ffe9e785a84060955dcab26855c1bde2c0cc6666033b53",
+        "literal": "JUDGE_SYSTEM_PROMPT_SINGLE_CROSS_DOMAIN",
+        "source_bytes": 38395,
+        "literal_sha256": "363ef222747f09e8f4ffe9e785a84060955dcab26855c1bde2c0cc6666033b53"
+      },
+      "judge_sycophancy.txt": {
+        "source": "prompts.py (ast-extracted literal)",
+        "sha256": "2b12701c4c7b9456c4060ed9b4b50b1091be2f6c50b6b661bad2cbdce7596ca3",
+        "literal": "JUDGE_SYSTEM_PROMPT_SINGLE_SYCOPHANCY",
+        "source_bytes": 38496,
+        "literal_sha256": "2b12701c4c7b9456c4060ed9b4b50b1091be2f6c50b6b661bad2cbdce7596ca3"
+      }
+    }
+  }
+}

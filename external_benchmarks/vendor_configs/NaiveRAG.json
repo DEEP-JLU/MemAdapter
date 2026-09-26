@@ -1,0 +1,11 @@
+{
+  "user_id": "dummy",
+  "embedder_provider": "huggingface",
+  "retriever_name_or_path": "baai/bge-m3",
+  "embedding_model_dims": 1024,
+  "vector_store_provider": "qdrant",
+  "qdrant_on_disk": true,
+  "llm_backend": "openai",
+  "llm_model": "gpt-4o-mini",
+  "use_gpu": "cpu"
+}

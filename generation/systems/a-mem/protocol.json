@@ -1,0 +1,1 @@
+{"system":"A-MEM","datasets":["MemSyco-Bench","PersistBench","MemTrapBench"],"models":["DeepSeek","Qwen","GPT"],"ablations":["stage1_only","stage1_stage2"],"runner":"methods/memadapter/run_memadapter.py"}
