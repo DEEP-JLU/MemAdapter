@@ -29,6 +29,8 @@ config/models.example.env  Non-secret local configuration template
 
 The registered memory systems are A-MEM, Mem0, naiveRAG, MemoryBank, and LightMem. Each system's supported datasets, backbones, and retained ablations are recorded in `generation/systems/<system>/protocol.json`.
 
+`external_benchmarks/memory_systems/` provides the bundled retrieval adapters for MemoryBank and LightMem. Each adapter constructs a per-instance memory store from the benchmark dialogue, retrieves the top-k memories, and passes the frozen retrieval record to the common generation and judge pipeline. The bundled vendor components retain their MIT license notices in the corresponding system directories.
+
 ## Backbones and decoding
 
 All methods compared within an experimental setting use the same generation backbone and decoding configuration.

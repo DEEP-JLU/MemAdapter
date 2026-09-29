@@ -42,7 +42,12 @@ from .memory_ingest import IngestPlan
 from .paths import PACKAGE_ROOT
 
 #: ``memory_id`` prefix per system, matching the frozen native retrieval files.
-MEMORY_ID_PREFIX = {"AMEM": "amem", "Mem0": "memzero", "naiveRAG": "naiverag"}
+MEMORY_ID_PREFIX = {
+    "AMEM": "amem", "Mem0": "memzero", "naiveRAG": "naiverag",
+    "MemoryBank": "memorybank", "LightMem": "lightmem",
+}
+
+BUNDLED_SYSTEMS = frozenset({"MemoryBank", "LightMem"})
 
 #: Where the vendored per-method JSON configs live, relative to ``benchmark/``.
 VENDOR_CONFIG_DIR = Path("baselines") / "toolkit" / "vendor" / "configs"
@@ -216,9 +221,6 @@ def build_eval_config(
     sample, because its given memory sets range from 4 to 16 items and a fixed 10
     would truncate 259 of 500 rows.
     """
-    paths.ensure_benchmark_on_path()
-    from baselines.config_loader import build_baseline_eval_config  # type: ignore
-
     method = run_config.METHOD_FOR_SYSTEM[system]
     os.environ.setdefault("MEM0_TELEMETRY", "False")
     # The memory layers read MEMORY_* while generation reads DEEPSEEK_*.  They
@@ -233,6 +235,24 @@ def build_eval_config(
         os.environ["MEMORY_API_KEY"] = deepseek_key
         os.environ["MEMORY_EMBEDDING_API_KEY"] = deepseek_key
 
+    if system in BUNDLED_SYSTEMS:
+        from .memory_systems import BaselineEvalConfig
+
+        return BaselineEvalConfig(
+            method=method,
+            top_k=top_k,
+            save_root=paths.store_dir(dataset, subset, system),
+            api_key=os.environ.get("MEMORY_API_KEY") or os.environ.get("DEEPSEEK_API_KEY"),
+            base_url=os.environ.get("MEMORY_BASE_URL") or os.environ.get("DEEPSEEK_BASE_URL"),
+            llm_model=os.environ.get("MEMORY_LLM_MODEL") or run_config.resolved_generation_model(),
+            embedding_model=os.environ.get("MEMORY_EMBEDDING_MODEL") or DEFAULT_EMBEDDING_REPO,
+            embedding_dims=int(os.environ.get("MEMORY_EMBEDDING_DIMS", "1024")),
+            embedding_api_key=os.environ.get("MEMORY_EMBEDDING_API_KEY"),
+            embedding_base_url=os.environ.get("MEMORY_EMBEDDING_BASE_URL"),
+        )
+
+    paths.ensure_benchmark_on_path()
+    from baselines.config_loader import build_baseline_eval_config  # type: ignore
     resolve_embedding_model()
     config_path = paths.ROOT / "benchmark" / "baselines" / "configs" / f"{method}.json"
     return build_baseline_eval_config(
@@ -338,13 +358,23 @@ def retrieve_sample(
     """Retrieve for one sample and return the frozen-schema row."""
     plan = ingest_plan or plan_for(sample)
     started = time.time()
-    context = build_context(
-        sample.prior_text,
-        sample.current_request,
-        eval_config,
-        sample_key=sample.sample_id,
-        ingest=plan,
-    )
+    if system in BUNDLED_SYSTEMS:
+        from .memory_systems import build_context as build_bundled_context
+        context = build_bundled_context(
+            run_config.METHOD_FOR_SYSTEM[system],
+            sample.prior_text,
+            sample.current_request,
+            eval_config,
+            sample_key=sample.sample_id,
+        )
+    else:
+        context = build_context(
+            sample.prior_text,
+            sample.current_request,
+            eval_config,
+            sample_key=sample.sample_id,
+            ingest=plan,
+        )
     marker, marker_mtime = _marker_state(context.save_dir)
     # ``started`` is sampled before the build, so a marker written by this call
     # always sorts at or after it while one left by an earlier run sorts strictly
@@ -352,7 +382,10 @@ def retrieve_sample(
     # timestamp granularity is also wide enough to call a second back-to-back
     # retrieval of the same sample a rebuild.
     created_at = str(marker.get("created_at") or "")
-    store_status = "built" if marker_mtime >= started else "reused"
+    store_status = (
+        "managed_by_adapter" if system in BUNDLED_SYSTEMS
+        else ("built" if marker_mtime >= started else "reused")
+    )
 
     return {
         "sample_id": sample.sample_id,
@@ -370,17 +403,18 @@ def retrieve_sample(
             "embedding_model": os.environ.get("MEMORY_EMBEDDING_MODEL"),
             "embedding_dims": os.environ.get("MEMORY_EMBEDDING_DIMS"),
             "baseline_config_path": str(
-                paths.ROOT / "benchmark" / "baselines" / "configs"
-                / f"{run_config.METHOD_FOR_SYSTEM[system]}.json"
+                (PACKAGE_ROOT / "memory_systems" / "configs" / f"{run_config.METHOD_FOR_SYSTEM[system]}.json")
+                if system in BUNDLED_SYSTEMS else
+                (paths.ROOT / "benchmark" / "baselines" / "configs" / f"{run_config.METHOD_FOR_SYSTEM[system]}.json")
             ),
             # Both paths are recorded: the stock file is what the repo ships and
             # what a reader would look at first, but it is *not* what ran. Only
             # the overlay carries the local-embedder provider.
-            "vendor_config_path": str(
+            "vendor_config_path": None if system in BUNDLED_SYSTEMS else str(
                 paths.ROOT / "benchmark" / VENDOR_CONFIG_DIR
                 / f"{run_config.METHOD_FOR_SYSTEM[system]}.json"
             ),
-            "vendor_config_used": str(
+            "vendor_config_used": None if system in BUNDLED_SYSTEMS else str(
                 materialize_vendor_config(run_config.METHOD_FOR_SYSTEM[system])
             ),
             # --- provenance added by this harness ---
@@ -488,7 +522,7 @@ def run_shard(
             "assigned": len(numbers), "retrieved": 0, "skipped": len(numbers),
         }
 
-    build_context = _load_cached_builder()
+    build_context = None if system in BUNDLED_SYSTEMS else _load_cached_builder()
     # top_k here is a fallback only; PersistBench overrides it per sample.
     eval_config = build_eval_config(
         system, dataset=spec.dataset, subset=spec.subset, top_k=10
