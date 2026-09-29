@@ -10,7 +10,7 @@ MemAdapter separates memory use into three stages:
 2. **Context-aware reflection** converts those cards and the current task context into per-memory use instructions.
 3. **Memory-use-guided generation** produces the final response under the validated instructions.
 
-Retrieval is frozen before generation, so all methods compared within one experimental cell receive byte-identical retrieved memories. The judge consumes the benchmark's task-specific rubric and emits structured outputs; metrics are computed exclusively from these structured outputs.
+Retrieval is frozen before generation, so all methods compared within one experimental cell receive byte-identical retrieved memories. Every post-retrieval generation method receives only the current request and those frozen memories; dialogue context, query-session history, and task evidence are not passed to any method. The judge consumes the benchmark's task-specific rubric and emits structured outputs; metrics are computed exclusively from these structured outputs.
 
 ## Repository layout
 
@@ -75,9 +75,10 @@ Generated artifacts are resumable and record retrieved memories, boundary cards,
 ## Post-retrieval comparison methods
 
 Anti-Sycophancy, Self-ReCheck, Dynamic Partition, and MemGate are implemented
-in `methods/shared/run_extra_interventions.py`. They operate on a frozen
-retrieval record and use only the current request and the retrieved memories.
-They do not consume dialogue context, query-session history, or task evidence.
+in `methods/shared/run_extra_interventions.py`. Together with Baseline and
+MemAdapter, they operate on a frozen retrieval record and use only the current
+request and the retrieved memories. They do not consume dialogue context,
+query-session history, or task evidence.
 The runner uses DeepSeek-V4-Flash with temperature 0.2, a 4,096-token limit,
 and thinking disabled. Credentials and endpoint URLs are supplied through the
 local environment.

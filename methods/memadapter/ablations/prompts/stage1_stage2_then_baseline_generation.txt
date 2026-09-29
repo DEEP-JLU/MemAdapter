@@ -17,10 +17,6 @@ USER PROMPT TEMPLATE
 {{CURRENT_QUERY}}
 </current_query>
 
-<current_context_and_available_evidence>
-{{CURRENT_CONTEXT_AND_AVAILABLE_EVIDENCE}}
-</current_context_and_available_evidence>
-
 <retrieved_memories>
 {{RETRIEVED_MEMORIES}}
 </retrieved_memories>

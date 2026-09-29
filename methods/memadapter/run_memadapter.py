@@ -389,46 +389,6 @@ def prompt_hashes(ablation: str) -> dict[str, str]:
     }
 
 
-def load_evidence(path: Path | None) -> dict[str, str]:
-    if path is None:
-        return {}
-    rows = read_jsonl(path)
-    evidence: dict[str, str] = {}
-    for row in rows:
-        sample_id = row.get("sample_id") or row.get("id")
-        if sample_id is None:
-            raise ValueError(f"Evidence row has no sample_id: {path}")
-        unexpected = set(row) - {"sample_id", "evidence", "current_task_evidence"}
-        if unexpected:
-            raise ValueError(
-                f"Evidence row {sample_id} has unsupported fields: {sorted(unexpected)}"
-            )
-        suspicious = {
-            key
-            for key in row
-            if any(token in key.lower() for token in ("answer", "rubric", "judge", "score", "reference", "evaluation"))
-        }
-        if suspicious:
-            raise ValueError(f"Evidence row {sample_id} contains evaluation-like fields: {sorted(suspicious)}")
-        value = row.get("evidence", row.get("current_task_evidence", ""))
-        if not isinstance(value, str):
-            raise ValueError(f"Evidence row {sample_id} evidence must be a string")
-        evidence[str(sample_id)] = str(value or "")
-    return evidence
-
-
-def dialogue_context(benchmark_row: dict[str, Any]) -> str:
-    parts = []
-    for message in benchmark_row.get("dialogue") or []:
-        if not isinstance(message, dict):
-            continue
-        role = str(message.get("role") or "assistant").strip().capitalize()
-        content = str(message.get("content") or "").strip()
-        if content:
-            parts.append(f"{role}: {content}")
-    return "\n\n".join(parts)
-
-
 def normalize_retrieval_row(
     row: dict[str, Any], *, require_top_10: bool = False
 ) -> dict[str, Any]:
@@ -635,12 +595,6 @@ def retry_call_traced(
     raise RuntimeError(f"{label} failed after {attempts} attempts: {last_error}") from last_error
 
 
-def safe_task_evidence(benchmark_row: dict[str, Any]) -> str:
-    """Do not synthesize task evidence from benchmark classification metadata."""
-
-    return ""
-
-
 def filter_skipped_rows(
     rows: list[dict[str, Any]], skip_sample_ids: list[str]
 ) -> tuple[list[dict[str, Any]], list[str]]:
@@ -823,7 +777,6 @@ def generate(args: argparse.Namespace) -> None:
         completed_records = {}
         completed_dir = args.output_dir / "completed_records"
 
-    evidence = load_evidence(args.evidence_file)
     thread_state = threading.local()
     run_id = new_run_id("generation")
     run_started_at = utc_now()
@@ -858,13 +811,6 @@ def generate(args: argparse.Namespace) -> None:
             base_url=client.base_url,
         )
         benchmark = row["benchmark_row"]
-        task_evidence = evidence.get(
-            row["sample_id"], safe_task_evidence(benchmark)
-        )
-        print(
-            f"[evidence] {row['sample_id']} current_task_evidence={task_evidence!r}",
-            flush=True,
-        )
         cache_path = args.output_dir / "stage_cache" / f"{row['sample_id']}.json"
         stage_cache: dict[str, Any] = {
             "sample_id": row["sample_id"],
@@ -966,8 +912,6 @@ def generate(args: argparse.Namespace) -> None:
             run_kwargs = {
                 "memories": row["retrieved_memories"],
                 "current_query": row["current_request"],
-                "dialogue_context": dialogue_context(benchmark),
-                "current_task_evidence": task_evidence,
                 "call_model": traced_call,
                 "stage_raw_cache": {
                     key: str(stage_cache.get(key) or "")
@@ -1005,7 +949,6 @@ def generate(args: argparse.Namespace) -> None:
             "memory_use_instructions": result["memory_use_instructions"],
             "final_answer": result["final_answer"],
             "final_answer_raw": result["stage3_raw"],
-            "current_task_evidence": task_evidence,
             "prompt_version": version,
             "prompt_hashes": hashes,
             "generation_model": client.model,
@@ -1690,7 +1633,6 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--retrieval-file", type=Path)
-    parser.add_argument("--evidence-file", type=Path, help="Optional JSONL: {sample_id, evidence}.")
     top_k_group = parser.add_mutually_exclusive_group(required=True)
     top_k_group.add_argument(
         "--require-top-10",

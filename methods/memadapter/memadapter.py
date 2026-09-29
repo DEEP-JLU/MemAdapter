@@ -74,34 +74,16 @@ def build_stage1_input(memories: list[dict[str, Any]]) -> str:
     return json.dumps(normalize_memories(memories), ensure_ascii=False, indent=2)
 
 
-def _context_and_evidence(dialogue_context: str, query_session_history: str, current_task_evidence: str) -> str:
-    return json.dumps(
-        {
-            "dialogue_context": dialogue_context,
-            "query_session_history": query_session_history,
-            "current_task_evidence": current_task_evidence,
-        },
-        ensure_ascii=False,
-        indent=2,
-    )
-
-
-def build_stage2_input(*, current_query: str, dialogue_context: str, query_session_history: str,
-                       current_task_evidence: str, memories: list[dict[str, Any]],
+def build_stage2_input(*, current_query: str, memories: list[dict[str, Any]],
                        boundary_cards: dict[str, Any]) -> dict[str, str]:
     return {
         "CURRENT_QUERY": current_query,
-        "CURRENT_CONTEXT_AND_AVAILABLE_EVIDENCE": _context_and_evidence(
-            dialogue_context, query_session_history, current_task_evidence
-        ),
         "RETRIEVED_MEMORIES": json.dumps(normalize_memories(memories), ensure_ascii=False, indent=2),
         "MEMORY_BOUNDARY_CARDS": json.dumps(boundary_cards, ensure_ascii=False, indent=2),
     }
 
 
-def build_stage2_direct_input(*, current_query: str, dialogue_context: str,
-                              query_session_history: str, current_task_evidence: str,
-                              memories: list[dict[str, Any]]) -> dict[str, str]:
+def build_stage2_direct_input(*, current_query: str, memories: list[dict[str, Any]]) -> dict[str, str]:
     """Build Stage-2 input when the boundary-induction module is ablated.
 
     It intentionally exposes only raw retrieval plus task context.  This prevents
@@ -111,36 +93,24 @@ def build_stage2_direct_input(*, current_query: str, dialogue_context: str,
 
     return {
         "CURRENT_QUERY": current_query,
-        "CURRENT_CONTEXT_AND_AVAILABLE_EVIDENCE": _context_and_evidence(
-            dialogue_context, query_session_history, current_task_evidence
-        ),
         "RETRIEVED_MEMORIES": json.dumps(normalize_memories(memories), ensure_ascii=False, indent=2),
     }
 
 
-def build_stage3_input(*, current_query: str, dialogue_context: str, query_session_history: str,
-                       current_task_evidence: str, memories: list[dict[str, Any]],
+def build_stage3_input(*, current_query: str, memories: list[dict[str, Any]],
                        use_instructions: dict[str, Any]) -> dict[str, str]:
     return {
         "CURRENT_QUERY": current_query,
-        "CURRENT_CONTEXT_AND_AVAILABLE_EVIDENCE": _context_and_evidence(
-            dialogue_context, query_session_history, current_task_evidence
-        ),
         "RETRIEVED_MEMORIES": json.dumps(normalize_memories(memories), ensure_ascii=False, indent=2),
         "MEMORY_USE_INSTRUCTIONS": json.dumps(use_instructions, ensure_ascii=False, indent=2),
     }
 
 
-def build_stage3_direct_input(*, current_query: str, dialogue_context: str,
-                              query_session_history: str, current_task_evidence: str,
-                              memories: list[dict[str, Any]]) -> dict[str, str]:
+def build_stage3_direct_input(*, current_query: str, memories: list[dict[str, Any]]) -> dict[str, str]:
     """Build the direct generation input for the Stage-3-only ablation."""
 
     return {
         "CURRENT_QUERY": current_query,
-        "CURRENT_CONTEXT_AND_AVAILABLE_EVIDENCE": _context_and_evidence(
-            dialogue_context, query_session_history, current_task_evidence
-        ),
         "RETRIEVED_MEMORIES": json.dumps(normalize_memories(memories), ensure_ascii=False, indent=2),
     }
 
@@ -275,8 +245,7 @@ def validate_stage2(result: dict[str, Any], memories: list[dict[str, Any]]) -> N
 
 
 def run_three_stage(*, memories: list[dict[str, Any]], current_query: str,
-                    call_model: CallModel, dialogue_context: str = "",
-                    query_session_history: str = "", current_task_evidence: str = "",
+                    call_model: CallModel,
                     stage_raw_cache: dict[str, str] | None = None,
                     on_stage_complete: StageComplete | None = None,
                     on_stage_start: StageStart | None = None,
@@ -314,9 +283,6 @@ def run_three_stage(*, memories: list[dict[str, Any]], current_query: str,
         stage2_template,
         build_stage2_input(
             current_query=current_query,
-            dialogue_context=dialogue_context,
-            query_session_history=query_session_history,
-            current_task_evidence=current_task_evidence,
             memories=normalized,
             boundary_cards=boundary_cards,
         ),
@@ -347,9 +313,6 @@ def run_three_stage(*, memories: list[dict[str, Any]], current_query: str,
         stage3_template,
         build_stage3_input(
             current_query=current_query,
-            dialogue_context=dialogue_context,
-            query_session_history=query_session_history,
-            current_task_evidence=current_task_evidence,
             memories=normalized,
             use_instructions=use_instructions,
         ),
@@ -403,8 +366,7 @@ ABLATION_VARIANTS = (
 
 
 def run_ablation(*, variant: str, memories: list[dict[str, Any]], current_query: str,
-                 call_model: CallModel, dialogue_context: str = "",
-                 query_session_history: str = "", current_task_evidence: str = "",
+                 call_model: CallModel,
                  stage_raw_cache: dict[str, str] | None = None,
                  on_stage_complete: StageComplete | None = None,
                  on_stage_start: StageStart | None = None,
@@ -469,9 +431,6 @@ def run_ablation(*, variant: str, memories: list[dict[str, Any]], current_query:
             {
                 **build_stage3_direct_input(
                     current_query=current_query,
-                    dialogue_context=dialogue_context,
-                    query_session_history=query_session_history,
-                    current_task_evidence=current_task_evidence,
                     memories=normalized,
                 ),
                 "MEMORY_BOUNDARY_CARDS": json.dumps(
@@ -551,9 +510,6 @@ def run_ablation(*, variant: str, memories: list[dict[str, Any]], current_query:
             stage2_template,
             build_stage2_input(
                 current_query=current_query,
-                dialogue_context=dialogue_context,
-                query_session_history=query_session_history,
-                current_task_evidence=current_task_evidence,
                 memories=normalized,
                 boundary_cards=boundary_cards,
             ),
@@ -591,9 +547,6 @@ def run_ablation(*, variant: str, memories: list[dict[str, Any]], current_query:
             baseline_template,
             build_stage3_input(
                 current_query=current_query,
-                dialogue_context=dialogue_context,
-                query_session_history=query_session_history,
-                current_task_evidence=current_task_evidence,
                 memories=normalized,
                 use_instructions=use_instructions,
             ),
@@ -650,9 +603,6 @@ def run_ablation(*, variant: str, memories: list[dict[str, Any]], current_query:
             stage3_template,
             build_stage3_direct_input(
                 current_query=current_query,
-                dialogue_context=dialogue_context,
-                query_session_history=query_session_history,
-                current_task_evidence=current_task_evidence,
                 memories=normalized,
             ),
         )
@@ -673,9 +623,6 @@ def run_ablation(*, variant: str, memories: list[dict[str, Any]], current_query:
         stage2_template,
         build_stage2_direct_input(
             current_query=current_query,
-            dialogue_context=dialogue_context,
-            query_session_history=query_session_history,
-            current_task_evidence=current_task_evidence,
             memories=normalized,
         ),
     )
@@ -705,9 +652,6 @@ def run_ablation(*, variant: str, memories: list[dict[str, Any]], current_query:
         stage3_template,
         build_stage3_input(
             current_query=current_query,
-            dialogue_context=dialogue_context,
-            query_session_history=query_session_history,
-            current_task_evidence=current_task_evidence,
             memories=normalized,
             use_instructions=use_instructions,
         ),
