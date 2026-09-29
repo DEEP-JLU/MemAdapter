@@ -23,7 +23,7 @@ generation/systems/        Per-memory-system experiment matrix
 methods/
   memadapter/              Three-stage method, local/API model clients, retained ablations
   baseline/                Direct generation prompt construction
-  shared/                  Shared experiment helpers
+  shared/                  Shared helpers and post-retrieval comparison runner
 config/models.example.env  Non-secret local configuration template
 ```
 
@@ -71,6 +71,22 @@ python methods/memadapter/run_memadapter.py --help
 ```
 
 Generated artifacts are resumable and record retrieved memories, boundary cards, memory-use instructions, final responses, structured judge outputs, and runtime metadata per evaluated instance.
+
+## Post-retrieval comparison methods
+
+Anti-Sycophancy, Self-ReCheck, Dynamic Partition, and MemGate are implemented
+in `methods/shared/run_extra_interventions.py`. They operate on a frozen
+retrieval record and use only the current request and the retrieved memories.
+They do not consume dialogue context, query-session history, or task evidence.
+The runner uses DeepSeek-V4-Flash with temperature 0.2, a 4,096-token limit,
+and thinking disabled. Credentials and endpoint URLs are supplied through the
+local environment.
+
+For example:
+
+```bash
+python methods/shared/run_extra_interventions.py --help
+```
 
 ## Paper ablations
 
