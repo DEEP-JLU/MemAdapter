@@ -6,6 +6,8 @@ set -Eeuo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
 
+# Select the interpreter through the environment on each machine.  The release
+# deliberately contains no user-specific filesystem paths.
 export PYTHON="${PYTHON:-python}"
 export HF_HUB_OFFLINE="${HF_HUB_OFFLINE:-1}"
 export TRANSFORMERS_OFFLINE="${TRANSFORMERS_OFFLINE:-1}"

@@ -64,7 +64,6 @@ def main(argv: list[str] | None = None) -> int:
     run_config.export_protocol_environment()
 
     model = os.environ.get("DEEPSEEK_MODEL", "")
-    base = os.environ.get("DEEPSEEK_BASE_URL", "")
     # Names only: DEEPSEEK_API_KEY's value is a credential and is never printed.
     key_source = (
         "DEEPSEEK_API_KEY" if os.environ.get("DEEPSEEK_API_KEY")
@@ -72,7 +71,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     print(
         f"[protocol-env] loaded {len(applied)} pin(s) from {run_config.DEFAULT_ENV_FILE}; "
-        f"model={model!r} base_url={base!r} api_key_from={key_source} "
+        f"model={model!r} base_url_configured={bool(os.environ.get('DEEPSEEK_BASE_URL'))} api_key_from={key_source} "
         f"temperature={run_config.resolved_temperature()} "
         f"max_tokens={run_config.resolved_max_tokens()} "
         f"thinking={run_config.resolved_thinking()}",

@@ -111,11 +111,9 @@ def merged_path(dataset: str, subset: str, system: str) -> Path:
 def resolve_embedding_model() -> str:
     """Return an absolute local path to the embedding model, and export it.
 
-    The stock vendor configs select the OpenAI embedder and name a model id
-    (``text-embedding-3-small``), and the outer configs name ``baai/bge-m3``.
-    Neither can be embedded here: the DeepSeek endpoint has no ``/embeddings``
-    route at all (404), and the bge-m3 weights are not in the local HuggingFace
-    cache by default, so a remote call fails and a local load finds no weights.
+    The released vendor overlays select the local BGE-M3 embedder. The generation
+    endpoint is not used for embeddings, and the BGE-M3 weights must be available
+    locally before retrieval construction starts.
 
     The resolved path is written back to ``MEMORY_EMBEDDING_MODEL`` because
     ``_build_toolkit_entry`` overwrites the layer's ``retriever_name_or_path``
@@ -162,9 +160,8 @@ def materialize_vendor_config(method: str) -> Path:
     wanted = LOCAL_EMBEDDER_PROVIDER[method]
     stock_provider = config.get("embedder_provider")
     config["embedder_provider"] = wanted
-    # A-MEM and MemZero ship 1536 dims for text-embedding-3-small; the local model
-    # is 1024. ``_build_toolkit_entry`` overwrites this from the env, but leaving a
-    # contradictory value in the file invites a silent mismatch if that ever stops.
+    # BGE-M3 uses 1024 dimensions. ``_build_toolkit_entry`` also exports this value,
+    # so the generated overlay and the runtime agree.
     if "embedding_model_dims" in config:
         config["embedding_model_dims"] = 1024
     # Default to CPU, overriding MemZero's shipped "cuda".  This remains the

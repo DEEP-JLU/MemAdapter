@@ -6,7 +6,7 @@ from typing import Dict, Optional, Any
 class EntropyCompressorConfig(BaseModel):
     entropy_config: Dict[str, Any] = Field(
         default={
-            "model_name": "gpt2",
+            "model_name": "DeepSeek-V4-Flash",
             "device": "cuda",
             "word_level_strategy": "average",  # or "first_token"
             "compress_rate": 0.5,

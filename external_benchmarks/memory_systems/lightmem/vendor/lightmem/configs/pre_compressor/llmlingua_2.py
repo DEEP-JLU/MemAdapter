@@ -35,7 +35,6 @@ class LlmLingua2Config(BaseModel):
         allowed_models = [
             "microsoft/llmlingua-2-xlm-roberta-large-meetingbank",
             "microsoft/llmlingua-2-bert-base-multilingual-cased-meetingbank",
-            "NousResearch/Llama-2-7b-hf",
             None
         ]
         model_name = v.get("model_name")

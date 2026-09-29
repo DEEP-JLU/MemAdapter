@@ -6,6 +6,6 @@
   "vector_store_provider": "qdrant",
   "qdrant_on_disk": true,
   "llm_backend": "openai",
-  "llm_model": "gpt-4o-mini",
+  "llm_model": "DeepSeek-V4-Flash",
   "use_gpu": "cpu"
 }
