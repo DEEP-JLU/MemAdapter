@@ -255,7 +255,9 @@ def run_three_stage(*, memories: list[dict[str, Any]], current_query: str,
     normalized = normalize_memories(memories)
     cached = stage_raw_cache or {}
 
-    stage1_system, stage1_template = load_prompt_parts("01_counterfactual_boundary_induction.txt")
+    stage1_system, stage1_template = load_prompt_parts(
+        "01_counterfactual_induction_method_aligned.txt"
+    )
     stage1_user = render_prompt(stage1_template, {"RETRIEVED_MEMORIES": build_stage1_input(normalized)})
     stage1_raw = cached.get("stage1_raw", "")
     stage1_cached = bool(stage1_raw)
@@ -278,7 +280,9 @@ def run_three_stage(*, memories: list[dict[str, Any]], current_query: str,
         if on_stage_finish:
             on_stage_finish("stage1", (time.perf_counter() - stage_started) * 1000, stage1_cached)
 
-    stage2_system, stage2_template = load_prompt_parts("02_context_aware_memory_reflection.txt")
+    stage2_system, stage2_template = load_prompt_parts(
+        "02_context_aware_reflection_method_aligned.txt"
+    )
     stage2_user = render_prompt(
         stage2_template,
         build_stage2_input(

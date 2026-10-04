@@ -8,25 +8,9 @@
 # (BASELINE_OPT_MEMORY_CACHE_MAX_ENTRIES=1) and therefore builds stores serially.
 # Raising --workers would not help here; raising --shards does.
 #
-# Shards are dispatched through one global pool (--jobs) rather than per group, so
-# the cap is on live store handles machine-wide -- the Windows handle growth that
-# forced sharding in the first place. Each shard writes its own part file and is
-# independently resumable: re-running a finished shard costs 0 model calls and
-# exits in well under a second (verified: 0.47s, retrieved=0, skipped=4).
-#
-# HEAP, NOT HANDLES, IS THE REAL CAP -- measured, not assumed. A shard process
-# holds its own SentenceTransformer over the same on-disk bge-m3. safetensors mmaps
-# the weights, so pages are shared and each *additional* process costs about
-# 1.0 GiB of physical memory rather than the 2.1 GiB its RSS reports (measured:
-# 3 processes -> RSS sum 5.73 GiB but available RAM fell only 3.22 GiB; 4 processes
-# -> available fell ~3.9 GiB). On this 15 GiB machine roughly 8 GiB is the user's
-# own applications and ~5.1 GiB is free at rest, which caps the pool near 5
-# processes even though 12 shards would be the handle-safe number.
-#
-# So the pool gates on available RAM as well as on --jobs: a unit is spawned only
-# when both a slot and --min-free-mib of headroom exist. Set --jobs to the width you
-# would *like* and let the gate find the width the machine can actually take; the
-# run then needs no babysitting and degrades to a slower pool instead of thrashing.
+# Shards are dispatched through one global pool (--jobs) rather than per group.
+# The launcher also keeps a configurable amount of free memory before starting a
+# new worker, so it can scale down cleanly on machines with less available RAM.
 #
 # Usage:
 #   run_external_retrieval.sh --lane memtrap --shards 12 --jobs 6 --min-free-mib 1536

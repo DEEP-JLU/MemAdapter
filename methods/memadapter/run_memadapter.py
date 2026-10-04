@@ -71,8 +71,8 @@ SYSTEMS = {
 RETRIEVAL_ROOT = ROOT.parent / "datasets" / "memsyco-bench" / "retrieval"
 FULL_PROMPT_VERSION = "MemAdapter-full-20260922"
 FULL_PROMPT_FILES = (
-    "01_counterfactual_boundary_induction.txt",
-    "02_context_aware_memory_reflection.txt",
+    "01_counterfactual_induction_method_aligned.txt",
+    "02_context_aware_reflection_method_aligned.txt",
     "03_memory_use_guided_generation.txt",
 )
 ABLATION_PROMPT_FILES = {

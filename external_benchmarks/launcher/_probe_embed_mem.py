@@ -1,11 +1,9 @@
 """Measure resident memory of a shard-like process holding the local embedder.
 
-Exists to answer one question the concurrency plan could not: how much host RAM
-does each retrieval shard actually cost? Every shard process builds its own
-SentenceTransformer on the same on-disk bge-m3, so if the weights were private
-per process, 12 concurrent shards would need 12 x 2.3 GB on a 15 GiB machine.
-safetensors loads with mmap, so the pages are expected to be shared through the
-page cache -- but "expected" is not a budget. This measures it.
+Measures the host-RAM cost of a retrieval shard. Every shard process builds its
+own SentenceTransformer on the same local BGE-M3 snapshot. safetensors can
+share mapped pages through the page cache; this utility measures the observed
+memory use before choosing a worker count.
 
 Run several at once and compare the sum of RSS against the drop in available RAM:
 if the sum grows linearly while available RAM barely moves, the pages are shared

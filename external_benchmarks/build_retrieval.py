@@ -164,27 +164,9 @@ def materialize_vendor_config(method: str) -> Path:
     # so the generated overlay and the runtime agree.
     if "embedding_model_dims" in config:
         config["embedding_model_dims"] = 1024
-    # Default to CPU, overriding MemZero's shipped "cuda".  This remains the
-    # desktop-safe setting; a multi-GPU server may opt in with
-    # MEMORY_EMBEDDER_DEVICE=cuda and pin workers via CUDA_VISIBLE_DEVICES.
-    # The original desktop rationale is:
-    #
-    #   * Concurrency here is process count (``run_shard`` builds stores strictly
-    #     serially), and every process loads its own embedder. On the GPU that is
-    #     one CUDA context and one full weight copy each -- a pool of even three
-    #     would not fit an 8 GB card, and the pool size is exactly the wall-clock
-    #     lever for a 112.8 h serial job. CPU keeps the pool bound by host RAM
-    #     instead, where the weights are mmap-shared (~1.0 GiB per extra process).
-    #   * The earlier MemSyco runs pinned "cpu" for both mem0 layers already (see
-    #     workspaces/deepseek/{naiverag,memzero}/configs/*_vendor.json), so this
-    #     reproduces their setting rather than inventing one.
-    #
-    # The embedder is not the bottleneck either way: store building is dominated by
-    # the layers' own LLM calls (A-MEM ~4.3 s per message, two calls per note), so
-    # a faster embedder would barely move the wall clock.
-    #
-    # A-MEM is unaffected: its retriever constructs SentenceTransformerEmbedding-
-    # Function without a device argument, which is CPU by default.
+    # Default to CPU for portable concurrent retrieval construction. Operators may
+    # opt into an accelerator by setting MEMORY_EMBEDDER_DEVICE and assigning
+    # workers through CUDA_VISIBLE_DEVICES.
     if "use_gpu" in config:
         config["use_gpu"] = os.environ.get("MEMORY_EMBEDDER_DEVICE", "cpu").strip() or "cpu"
 

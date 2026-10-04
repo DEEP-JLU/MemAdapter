@@ -59,10 +59,10 @@ Obtain each benchmark from its official distribution and point the runners to th
 
 The intended order is:
 
-1. Build and freeze retrieval for each `(dataset, task, memory system)` cell with `external_benchmarks/build_retrieval.py` or `external_benchmarks/launcher/run_external_retrieval.sh`.
-2. Run baseline and MemAdapter generation on the same frozen retrieval file with `external_benchmarks/run_external_baseline.py` and `methods/memadapter/run_memadapter.py`.
-3. Run the shared rubric judge using `external_benchmarks/run_external_judge.py`.
-4. Validate protocol consistency, coverage, and judge parsing with `external_benchmarks/validate_external.py`.
+1. Build and freeze retrieval for each `(dataset, task, memory system)` cell with `python -m external_benchmarks.build_retrieval` or `external_benchmarks/launcher/run_external_retrieval.sh`.
+2. Run baseline and MemAdapter generation on the same frozen retrieval file with `python -m external_benchmarks.run_external_baseline` and `methods/memadapter/run_memadapter.py`.
+3. Run the shared rubric judge using `python -m external_benchmarks.run_external_judge`.
+4. Validate protocol consistency, coverage, and judge parsing with `python -m external_benchmarks.validate_external`.
 
 For a MemAdapter run, inspect the available arguments with:
 

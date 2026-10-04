@@ -59,9 +59,9 @@ LLM_INGEST_SYSTEMS = frozenset({"A-MEM", "MemZero"})
 #: into the store without a speaker prefix or LLM re-extraction (PersistBench).
 INGEST_MODES = ("messages", "raw", "raw_dialogue_fallback")
 
-#: Repo-root env file holding the non-secret protocol pins. Loaded explicitly by
-#: the launcher and by dev scripts; see :func:`load_env_file`.
-DEFAULT_ENV_FILE = "config/.external_bench_20260917.env"
+#: Public configuration template used when a caller does not select another env
+#: file.  Shell variables take precedence, so credentials remain local.
+DEFAULT_ENV_FILE = "config/models.example.env"
 
 #: Environment variables the model client consumes. Recorded by name so the run
 #: config stays archivable; values are recorded only for the non-secret ones.
@@ -169,10 +169,10 @@ def resolved_thinking() -> bool:
 
 
 def load_env_file(path: Path | None = None, *, override: bool = False) -> dict[str, str]:
-    """Load the ``KEY=VALUE`` protocol pins from a plain-text env file.
+    """Load configuration values from a plain-text env file.
 
     ``override=False`` (the default) means the surrounding shell wins. That is
-    the right precedence here because the file holds the non-secret protocol pins
+    the right precedence here because the file holds only public defaults
     and never a credential: anything already exported is a deliberate operator
     choice, and silently clobbering it would defeat the point of pinning.
 

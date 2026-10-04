@@ -5,7 +5,6 @@ param(
     [int]$Workers = 16,
     [Nullable[int]]$Limit,
     [string]$RetrievalRoot,
-    [string]$EvidenceFile,
     [string]$OutputRoot,
     [switch]$RequireTop10
 )
@@ -29,7 +28,6 @@ foreach ($system in $systems) {
         Workers = $Workers
     }
     if ($null -ne $Limit) { $invokeParams.Limit = $Limit }
-    if ($EvidenceFile) { $invokeParams.EvidenceFile = $EvidenceFile }
     if ($RequireTop10) { $invokeParams.RequireTop10 = $true }
     if ($RetrievalRoot) {
         $invokeParams.RetrievalFile = Join-Path $RetrievalRoot "$system.jsonl"

@@ -69,7 +69,7 @@ def ensure_local_weights(repo: str = DEFAULT_EMBEDDING_REPO) -> Path:
     if isinstance(state, dict) and "state_dict" in state and isinstance(state["state_dict"], dict):
         state = state["state_dict"]
     # save_file rejects non-contiguous tensors, and a converted checkpoint can
-    # carry views. cheap next to the 2.3 GB it is about to write.
+    # carry views.
     state = {name: tensor.contiguous() for name, tensor in state.items()}
 
     # Write beside the target and move into place. A truncated model.safetensors

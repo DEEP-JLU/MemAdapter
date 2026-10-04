@@ -14,7 +14,6 @@ param(
     [int]$Workers = 4,
     [Nullable[int]]$Limit,
     [string]$RetrievalFile,
-    [string]$EvidenceFile,
     [string]$OutputDir,
     [switch]$RequireTop10
 )
@@ -39,7 +38,6 @@ if ($RequireTop10) {
 }
 if ($null -ne $Limit) { $common += "--limit", $Limit }
 if ($RetrievalFile) { $common += "--retrieval-file", $RetrievalFile }
-if ($EvidenceFile) { $common += "--evidence-file", $EvidenceFile }
 if ($OutputDir) { $common += "--output-dir", $OutputDir }
 
 & python @($common + "generate")
