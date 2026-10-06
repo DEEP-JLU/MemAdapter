@@ -1,16 +1,27 @@
 # MemAdapter
 
-Official code for "MemAdapter: Counterfactual Adaptation Against Memory-induced Sycophancy", a novel framework that adaptively integrates retrieved memories to support objective and reliable reasoning.
+Official code for **"MemAdapter: Counterfactual Adaptation Against Memory-induced Sycophancy"**, a novel framework that adaptively integrates retrieved memories to support objective and reliable reasoning.
 
 ## Overview
 
-MemAdapter separates memory use into three stages:
+MemAdapter mitigates memory-induced sycophancy via three stages:
 
 1. **Counterfactual boundary induction** creates a query-independent risk/boundary card for each retrieved memory.
 2. **Context-aware reflection** converts those cards and the current task context into per-memory use instructions.
 3. **Memory-use-guided generation** produces the final response under the validated instructions.
 
 Retrieval is frozen before generation, so all methods compared within one experimental cell receive byte-identical retrieved memories. Every post-retrieval generation method receives only the current request and those frozen memories; dialogue context, query-session history, and task evidence are not passed to any method. The judge consumes the benchmark's task-specific rubric and emits structured outputs; metrics are computed exclusively from these structured outputs.
+
+**📃 Please [cite our paper](#-citation)** if you find this paper or repository helpful.
+
+```bibtex
+@article{ningmemadapter,
+  title={Memadapter: Counterfactual Adaptation Against Memory-induced Sycophancy},
+  author={Ning, Ruqing and Meng, Haibo and Xiang, Zhishang and Chen, Zerui and Su, Jinsong and Wang, Xin and Zhang, Qinggang},
+  journal={arXiv preprint arXiv:2610.05162},
+  year={2026}
+}
+```
 
 ## Repository layout
 
@@ -104,4 +115,11 @@ The implementation follows the official protocol and task-specific rubrics for e
 
 ## Citation
 
-Citation information will be added with the paper's public release.
+```bibtex
+@article{ningmemadapter,
+  title={Memadapter: Counterfactual Adaptation Against Memory-induced Sycophancy},
+  author={Ning, Ruqing and Meng, Haibo and Xiang, Zhishang and Chen, Zerui and Su, Jinsong and Wang, Xin and Zhang, Qinggang},
+  journal={arXiv preprint arXiv:2610.05162},
+  year={2026}
+}
+```
