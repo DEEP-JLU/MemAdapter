@@ -12,16 +12,8 @@ MemAdapter mitigates memory-induced sycophancy via three stages:
 
 Retrieval is frozen before generation, so all methods compared within one experimental cell receive byte-identical retrieved memories. Every post-retrieval generation method receives only the current request and those frozen memories; dialogue context, query-session history, and task evidence are not passed to any method. The judge consumes the benchmark's task-specific rubric and emits structured outputs; metrics are computed exclusively from these structured outputs.
 
-**📃 Please [cite our paper](#-citation)** if you find this paper or repository helpful.
+**📃 Please [cite our paper](##-citation)** if you find this paper or repository helpful.
 
-```bibtex
-@article{ningmemadapter,
-  title={Memadapter: Counterfactual Adaptation Against Memory-induced Sycophancy},
-  author={Ning, Ruqing and Meng, Haibo and Xiang, Zhishang and Chen, Zerui and Su, Jinsong and Wang, Xin and Zhang, Qinggang},
-  journal={arXiv preprint arXiv:2610.05162},
-  year={2026}
-}
-```
 
 ## Repository layout
 
