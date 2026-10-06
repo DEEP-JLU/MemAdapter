@@ -4,17 +4,9 @@
 
 <p>Counterfactual Adaptation Against Memory-induced Sycophancy</p>
 
-[![Paper](https://img.shields.io/badge/Paper-arXiv-b31b1b?style=for-the-badge&logo=arxiv)](https://arxiv.org/abs/2610.05162)
+[![arXiv](https://img.shields.io/badge/arXiv-2610.05162-b31b1b?style=for-the-badge&logo=arxiv)](https://arxiv.org/abs/2610.05162)
+[![PDF](https://img.shields.io/badge/Paper-PDF-b31b1b?style=for-the-badge&logo=adobeacrobatreader&logoColor=white)](https://arxiv.org/pdf/2610.05162)
 [![Code](https://img.shields.io/badge/Code-GitHub-181717?style=for-the-badge&logo=github)](https://github.com/DEEP-JLU/MemAdapter)
-
-<p>
-  <a href="#about">📖 About</a> ·
-  <a href="#repository-structure">🗂️ Structure</a> ·
-  <a href="#installation">🛠️ Installation</a> ·
-  <a href="#quick-start">🚀 Quick Start</a> ·
-  <a href="#reproducing-experiments">🧪 Reproduction</a> ·
-  <a href="#citation">📑 Citation</a>
-</p>
 
 </div>
 
