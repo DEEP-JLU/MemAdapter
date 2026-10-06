@@ -1,8 +1,26 @@
-# MemAdapter
+<div align="center">
+
+<h1>MemAdapter</h1>
+
+<p>Counterfactual Adaptation Against Memory-induced Sycophancy</p>
+
+[![Paper](https://img.shields.io/badge/Paper-arXiv-b31b1b?style=for-the-badge&logo=arxiv)](https://arxiv.org/abs/2610.05162)
+[![Code](https://img.shields.io/badge/Code-GitHub-181717?style=for-the-badge&logo=github)](https://github.com/DEEP-JLU/MemAdapter)
+
+<p>
+  <a href="#about">📖 About</a> ·
+  <a href="#repository-structure">🗂️ Structure</a> ·
+  <a href="#installation">🛠️ Installation</a> ·
+  <a href="#quick-start">🚀 Quick Start</a> ·
+  <a href="#reproducing-experiments">🧪 Reproduction</a> ·
+  <a href="#citation">📑 Citation</a>
+</p>
+
+</div>
 
 Official implementation of **MemAdapter: Counterfactual Adaptation Against Memory-induced Sycophancy**. MemAdapter evaluates how retrieved memories are used during language-model generation, with shared retrieval, generation, and judging pipelines for memory-system comparisons.
 
-## About
+<h2 id="about">📖 About</h2>
 
 A retrieved memory may be useful, stale, too broad, or irrelevant to the current request. MemAdapter handles this in three stages:
 
@@ -12,7 +30,7 @@ A retrieved memory may be useful, stale, too broad, or irrelevant to the current
 
 The repository supports A-MEM, Mem0, naiveRAG, MemoryBank, and LightMem. It also includes direct generation and four post-retrieval comparison methods: Anti-Sycophancy, Self-ReCheck, Dynamic Partition, and MemGate.
 
-## Repository Structure
+<h2 id="repository-structure">🗂️ Repository Structure</h2>
 
 ```text
 external_benchmarks/       Retrieval, evaluation protocol, judges, and validation
@@ -29,7 +47,7 @@ config/models.example.env  Local configuration template
 
 `external_benchmarks/memory_systems/` contains the bundled retrieval adapters for MemoryBank and LightMem. Per-system datasets, backbones, and ablations are recorded in `generation/systems/<system>/protocol.json`.
 
-## Installation
+<h2 id="installation">🛠️ Installation</h2>
 
 ```bash
 python -m pip install -r requirements.txt
@@ -37,7 +55,7 @@ python -m pip install -r requirements.txt
 
 Copy `config/models.example.env` to a local environment file, or export its values through your shell or secret manager. For local Qwen3-8B inference, set `QWEN_LOCAL_MODEL_PATH` to the model directory. Obtain each benchmark from its official distribution and provide its local location through the documented environment variables or command-line arguments.
 
-## Quick Start
+<h2 id="quick-start">🚀 Quick Start</h2>
 
 Inspect the available options for the main components:
 
@@ -55,7 +73,7 @@ The pipeline runs in four steps:
 3. Run the task-specific judge.
 4. Validate coverage and judge parsing.
 
-## Reproducing Experiments
+<h2 id="reproducing-experiments">🧪 Reproducing Experiments</h2>
 
 Each experimental cell uses one frozen retrieval record, shared by every compared generation method. Methods receive the current request and the frozen memories; they do not receive dialogue context, query-session history, or task evidence.
 
@@ -78,7 +96,7 @@ Two ablations are included:
 
 Use `methods/memadapter/ablations/run_ablation.ps1` for one ablation cell, or the batch launchers in the same directory for all registered systems.
 
-## Citation
+<h2 id="citation">📑 Citation</h2>
 
 ```bibtex
 @article{ningmemadapter,
