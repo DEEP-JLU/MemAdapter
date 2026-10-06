@@ -1,6 +1,6 @@
-# MemAdapter: Counterfactual Adaptation Against Memory-induced Sycophancy
+# MemAdapter
 
-Official code for evaluating memory systems with retrieval, memory-guided generation, and rubric-based judging. The repository provides source code, launchers, prompt templates, and configuration examples for reproducing the evaluation pipeline.
+Official code for "MemAdapter: Counterfactual Adaptation Against Memory-induced Sycophancy", a novel framework that adaptively integrates retrieved memories to support objective and reliable reasoning.
 
 ## Overview
 
