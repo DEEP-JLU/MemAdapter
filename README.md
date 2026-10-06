@@ -8,6 +8,17 @@
 [![PDF](https://img.shields.io/badge/Paper-PDF-b31b1b?style=for-the-badge&logo=adobeacrobatreader&logoColor=white)](https://arxiv.org/pdf/2610.05162)
 [![Code](https://img.shields.io/badge/Code-GitHub-181717?style=for-the-badge&logo=github)](https://github.com/DEEP-JLU/MemAdapter)
 
+<p>
+  <a href="#about">📖 About</a> ·
+  <a href="#repository-structure">🗂️ Structure</a> ·
+  <a href="#installation">🛠️ Installation</a>
+</p>
+<p>
+  <a href="#quick-start">🚀 Quick Start</a> ·
+  <a href="#reproducing-experiments">🧪 Reproduction</a> ·
+  <a href="#citation">📑 Citation</a>
+</p>
+
 </div>
 
 Official implementation of **MemAdapter: Counterfactual Adaptation Against Memory-induced Sycophancy**. MemAdapter evaluates how retrieved memories are used during language-model generation, with shared retrieval, generation, and judging pipelines for memory-system comparisons.
